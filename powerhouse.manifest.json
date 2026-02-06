@@ -1,0 +1,25 @@
+{
+  "name": "",
+  "description": "",
+  "category": "",
+  "publisher": {
+    "name": "",
+    "url": ""
+  },
+  "documentModels": [
+    {
+      "id": "powerhouse/document-editor-builder",
+      "name": "Document Editor Builder"
+    }
+  ],
+  "editors": [
+    {
+      "id": "document-editor-builder",
+      "name": "Document Editor Builder",
+      "documentTypes": ["powerhouse/document-editor-builder"]
+    }
+  ],
+  "apps": [],
+  "subgraphs": [],
+  "importScripts": []
+}

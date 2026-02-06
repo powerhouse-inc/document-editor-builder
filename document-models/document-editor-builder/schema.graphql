@@ -1,0 +1,507 @@
+scalar Unknown
+scalar DateTime
+scalar Attachment
+scalar Address
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+type DocumentEditorBuilderState {
+  documentName: String
+  documentType: String
+  schema: [EditorComponent!]!
+  theme: Theme
+  groupProps: GroupComponentConfig
+}
+
+type Theme {
+  primaryColor: String
+  backgroundColor: String
+  textColor: String
+  secondaryTextColor: String
+}
+
+type EditorComponent {
+  id: OID!
+  type: EditorComponentType!
+  control: EditorComponentControl!
+  config: EditorComponentConfig
+  groupId: OID
+}
+
+enum EditorComponentType {
+  action
+  input
+  content
+  group
+  custom
+  spacer
+}
+
+enum EditorComponentControl {
+  form
+  label
+  title
+  subtitle
+  paragraph
+  bulletList
+  input
+  group
+  custom
+  spacer
+}
+
+union EditorComponentConfig =
+  | ActionComponentConfig
+  | InputComponentConfig
+  | ContentComponentConfig
+  | GroupComponentConfig
+  | CustomComponentConfig
+  | SpacerComponentConfig
+
+type ActionComponentConfig {
+  action: ActionConfig
+  formProps: FormProps
+  group: GroupComponentConfig
+}
+
+type InputComponentConfig {
+  field: ActionField!
+  actionId: OID!
+}
+
+type ContentComponentConfig {
+  text: String
+  label: String
+  scope: String
+  scopeDataType: FieldDataType
+  contentFormat: ContentFormat
+}
+
+type GroupComponentConfig {
+  layout: Layout!
+  gap: Int!
+  paddingTop: Int!
+  paddingRight: Int!
+  paddingBottom: Int!
+  paddingLeft: Int!
+  minWidth: Int
+  maxWidth: Int
+  minHeight: Int
+  maxHeight: Int
+  horizontalOrientation: HorizontalOrientation
+  verticalOrientation: VerticalOrientation
+}
+
+type CustomComponentConfig {
+  name: String!
+  path: String!
+}
+
+type SpacerComponentConfig {
+  width: Int
+  height: Int
+}
+
+type ActionConfig {
+  id: OID!
+  name: String
+}
+
+type FormProps {
+  trigger: CallbackTrigger
+  hasResetButton: Boolean
+}
+
+type ActionField {
+  name: String
+  actionInput: String
+  scope: FieldScope!
+  dataType: FieldDataType
+  props: FieldScalarProps
+}
+
+type FieldScope {
+  type: ScopeType!
+  defaultValue: String
+  field: String
+}
+
+enum ScopeType {
+  not_binded
+  binded
+  default_value
+  submit_button
+  reset_button
+}
+
+union FieldScalarProps =
+  | StringFieldProps
+  | BooleanFieldProps
+  | NumberFieldProps
+  | OIDFieldProps
+  | EnumFieldProps
+  | ButtonFieldProps
+
+type StringFieldProps {
+  multiline: Boolean
+  placeholder: String
+  minLength: Int
+  maxLength: Int
+  description: String
+}
+type BooleanFieldProps {
+  isToggle: Boolean
+  optionalLabel: String
+  description: String
+}
+type NumberFieldProps {
+  placeholder: String
+  min: Int
+  max: Int
+  precision: Int
+}
+type OIDFieldProps {
+  placeholder: String
+  showIdField: Boolean
+}
+type EnumFieldProps {
+  placeholder: String
+  variant: EnumVariant
+  clearable: Boolean
+  searchable: Boolean
+}
+type ButtonFieldProps {
+  text: String
+  variant: ButtonVariant
+}
+
+enum EnumVariant {
+  auto
+  Select
+  RadioGroup
+}
+
+enum FieldDataType {
+  String
+  Int
+  Float
+  Amount
+  Currency
+  Boolean
+  Date
+  DateTime
+  EmailAddress
+  OID
+  Upload
+  Enum
+}
+
+enum CallbackTrigger {
+  onSubmit
+  onChange
+  onBlur
+}
+
+enum Layout {
+  column
+  row
+}
+
+enum HorizontalOrientation {
+  left
+  center
+  right
+}
+
+enum VerticalOrientation {
+  top
+  middle
+  bottom
+}
+
+enum ButtonVariant {
+  link
+  default
+  secondary
+  destructive
+  outline
+  ghost
+}
+
+union ContentFormat = DateFormat | IntFormat | FloatFormat | BooleanFormat
+
+type DateFormat {
+  format: String
+}
+
+type FloatFormat {
+  decimalPlaces: Int
+  unit: String
+}
+
+type IntFormat {
+  unit: String
+}
+
+type BooleanFormat {
+  showCheckbox: Boolean
+}
+
+
+# document_type
+
+input SetDocumentTypeInput {
+  documentType: String
+  documentName: String
+}
+
+input SetNewDocumentNameInput {
+  name: String!
+}
+
+# components
+
+input AddActionComponentInput {
+  id: OID!
+  control: EditorComponentControl
+  actionId: OID!
+  actionName: String!
+  trigger: CallbackTrigger
+  initialFields: [AddEditorActionFieldInput!]!
+  insertBefore: OID
+}
+
+input AddEditorActionFieldInput {
+  id: OID!
+  actionInput: String
+  scope: String
+  dataType: FieldDataType
+}
+
+input ReorderComponentsInput {
+  components: [OID!]!
+  insertBefore: OID
+}
+
+input RemoveComponentInput {
+  componentId: OID!
+}
+
+
+input EditActionComponentInput {
+  id: OID!
+  control: String
+  actionId: OID
+  actionName: String
+  fields: [EditEditorActionFieldInput!]
+  trigger: CallbackTrigger
+  hasResetButton: Boolean
+}
+
+input EditEditorActionFieldInput {
+  id: OID!
+  actionInput: String
+  scope: String
+  name: String
+  dataType: FieldDataType
+}
+
+input EditFieldActionComponentInput {
+  fieldId: OID!
+  scopeType: ScopeType
+  scopeField: String
+  scopeDefaultValue: String
+  name: String
+  props: FieldScalarPropsInput
+}
+
+input FieldScalarPropsInput {
+  string: StringFieldPropsInput
+  boolean: BooleanFieldPropsInput
+  number: NumberFieldPropsInput
+  oid: OIDFieldPropsInput
+  enum: EnumFieldPropsInput
+  button: ButtonFieldPropsInput
+}
+
+input StringFieldPropsInput {
+  multiline: Boolean
+  placeholder: String
+  minLength: Int
+  maxLength: Int
+  description: String
+}
+
+input BooleanFieldPropsInput {
+  isToggle: Boolean
+  optionalLabel: String
+  description: String
+}
+
+input NumberFieldPropsInput {
+  placeholder: String
+  min: Int
+  max: Int
+  precision: Int
+}
+
+input OIDFieldPropsInput {
+  placeholder: String
+  showIdField: Boolean
+}
+
+input EnumFieldPropsInput {
+  placeholder: String
+  variant: EnumVariant
+  clearable: Boolean
+  searchable: Boolean
+}
+
+input ButtonFieldPropsInput {
+  text: String
+  variant: ButtonVariant
+}
+
+input AddComponentInput {
+  id: OID!
+  type: EditorComponentType!
+  control: EditorComponentControl!
+  scope: String
+  scopeDataType: FieldDataType
+  name: String
+  groupId: OID
+  insertBefore: OID
+}
+
+
+input EditContentComponentInput {
+  id: OID!
+  label: String
+  control: EditorComponentControl
+  scope: String
+  scopeDataType: FieldDataType
+  text: String
+  contentFormat: ContentFormatInput
+}
+
+input ContentFormatInput {
+  date: DateFormatInput
+  float: FloatFormatInput
+  int: IntFormatInput
+  boolean: BooleanFormatInput
+}
+
+input DateFormatInput {
+  format: String
+}
+
+input FloatFormatInput {
+  decimalPlaces: Int
+  unit: String
+}
+
+input IntFormatInput {
+  unit: String
+}
+
+input BooleanFormatInput {
+  showCheckbox: Boolean
+}
+
+input EditCustomComponentInput {
+  id: OID!
+  name: String
+  path: String
+}
+
+input CreateGroupInput {
+  id: OID!
+  componentIds:[OID!]!
+  insertBefore: OID
+}
+
+input AddToGroupInput {
+  id: OID!
+  componentIds:[OID!]!
+}
+
+input RemoveFromGroupInput {
+ id: OID!
+  componentIds:[OID!]!
+}
+
+input EditGroupComponentInput {
+   id: OID!
+  layout: Layout
+  gap: Int
+  paddingTop: Int
+  paddingRight: Int
+  paddingBottom: Int
+  paddingLeft: Int
+  minWidth: Int
+  maxWidth: Int
+  minHeight: Int
+  maxHeight: Int
+  horizontalOrientation: HorizontalOrientation
+  verticalOrientation: VerticalOrientation
+}
+
+input EditSpacerComponentInput {
+  id: OID!
+  width: Int
+  height: Int
+}
+
+# schema
+
+input SetSchemaInput {
+  schema: [SchemaEditorComponent!]!
+}
+
+input SchemaEditorComponent {
+  id: OID!
+}
+
+input ResetSchemaInput {
+  # Dummy field - RESET_SCHEMA operation takes no parameters, but GraphQL requires at least one field
+  _empty: Boolean
+}
+
+# theme
+
+input EditThemeInput {
+ primaryColor: String
+   backgroundColor: String
+   textColor: String
+   secondaryTextColor: String
+}
+
+
+input EditRootGroupPropsInput {
+  layout: Layout
+  gap: Int
+  paddingTop: Int
+  paddingRight: Int
+  paddingBottom: Int
+  paddingLeft: Int
+  minWidth: Int
+  maxWidth: Int
+  minHeight: Int
+  maxHeight: Int
+  horizontalOrientation: HorizontalOrientation
+  verticalOrientation: VerticalOrientation
+}
